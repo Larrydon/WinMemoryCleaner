@@ -7,7 +7,7 @@ namespace System.Runtime.CompilerServices
     /// </summary>
     /// <seealso cref="Attribute" />
     [AttributeUsage(AttributeTargets.Parameter)]
-    public sealed class CallerMemberNameAttribute : Attribute
+    public sealed class CallerMemberName2Attribute : Attribute
     {
     }
 }

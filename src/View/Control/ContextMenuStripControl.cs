@@ -17,7 +17,7 @@ namespace WinMemoryCleaner
         private static readonly Color _darkOver = ((SolidColorBrush)Application.Current.FindResource("DarkOver")).ToColor();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ContextMenuStripControl"/> class.
+        /// Initializes a new instance of the <see cref="ContextMenuStripControl" /> class.
         /// </summary>
         public ContextMenuStripControl()
         {
@@ -43,7 +43,7 @@ namespace WinMemoryCleaner
         public class ToolStripRenderer : ToolStripProfessionalRenderer
         {
             /// <summary>
-            /// Initializes a new instance of the <see cref="ToolStripRenderer"/> class.
+            /// Initializes a new instance of the <see cref="ToolStripRenderer" /> class.
             /// </summary>
             public ToolStripRenderer()
                 : base(new ToolStripColorTable())
@@ -57,9 +57,6 @@ namespace WinMemoryCleaner
             protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
             {
                 base.OnRenderItemText(e);
-
-                if (e == null)
-                    return;
 
                 e.Item.ForeColor = e.Item.Selected ? _darkOver : _darkForeground;
             }
@@ -76,9 +73,6 @@ namespace WinMemoryCleaner
             /// <param name="e">A <see cref="T:System.Windows.Forms.ToolStripSeparatorRenderEventArgs" /> that contains the event data.</param>
             protected override void OnRenderSeparator(ToolStripSeparatorRenderEventArgs e)
             {
-                if (e == null)
-                    return;
-
                 var toolStripSeparator = e.Item as ToolStripSeparator;
 
                 if (toolStripSeparator == null)

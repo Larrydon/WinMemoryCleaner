@@ -196,27 +196,32 @@ namespace WinMemoryCleaner
                         if (memory == null)
                             throw new ArgumentNullException("memory");
 
-                        using (var image = new Bitmap(16, 14))
+                        if (memory.Physical.Used.Percentage == 0)
+                            return;
+
+                        using (var image = new Bitmap(16, 16))
+                        using (var graphics = Graphics.FromImage(image))
+                        using (var font = new Font("Arial", 9F))
+                        using (var format = new StringFormat())
                         {
-                            using (var graphics = Graphics.FromImage(image))
-                            {
-                                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                                graphics.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
+                            format.Alignment = StringAlignment.Center;
+                            format.LineAlignment = StringAlignment.Center;
 
-                                graphics.FillRectangle(memory.Physical.Used.Percentage >= 90 ? Brushes.Red : memory.Physical.Used.Percentage >= 80 ? Brushes.DarkOrange : Brushes.Black, 0, 0, image.Width, image.Height);
+                            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                            graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                            graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                            graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
 
-                                using (var font = new Font("Arial", 10, FontStyle.Regular, GraphicsUnit.Point))
-                                    graphics.DrawString(string.Format(Localizer.Culture, "{0:00}", memory.Physical.Used.Percentage == 100 ? 0 : memory.Physical.Used.Percentage), font, Brushes.WhiteSmoke, -1, -1);
-                            }
+                            //設顏色
+                            graphics.FillRectangle(memory.Physical.Used.Percentage >= 90 ? Brushes.Red : memory.Physical.Used.Percentage >= 80 ? Brushes.DarkOrange : Brushes.Green, 0, 0, 16, 15);
+                            graphics.DrawString(string.Format(Localizer.Culture, "{0:00}", memory.Physical.Used.Percentage == 100 ? 0 : memory.Physical.Used.Percentage), font, Brushes.WhiteSmoke, 8, 8, format);
 
-                            using (var icon = Icon.FromHandle(image.GetHicon()))
-                            {
-                                _notifyIcon.Icon = icon;
+                            var handle = image.GetHicon();
 
-                                NativeMethods.DestroyIcon(icon.Handle);
-                            }
+                            using (var icon = Icon.FromHandle(handle))
+                                _notifyIcon.Icon = (Icon)icon.Clone();
+
+                            NativeMethods.DestroyIcon(handle);
                         }
                         break;
                 }

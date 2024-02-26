@@ -276,14 +276,14 @@ namespace WinMemoryCleaner
                     // DI/IOC
                     DependencyInjection.Container.Register(_notifyIcon);
 
-                    // Update notification
-                    if (!string.IsNullOrWhiteSpace(updateNotification))
-                        DependencyInjection.Container.Resolve<INotificationService>().Notify(updateNotification);
-
                     var mainWindow = new MainWindow();
 
                     if (!Settings.StartMinimized)
                         mainWindow.Show();
+
+                    // Update notification
+                    if (!string.IsNullOrWhiteSpace(updateNotification))
+                        DependencyInjection.Container.Resolve<INotificationService>().Notify(updateNotification);
 
                     ReleaseMemory();
                 }
@@ -551,19 +551,22 @@ namespace WinMemoryCleaner
 
                         client.DownloadFile(Constants.App.Repository.LatestExeUri, temp);
 
-                        _updateProcess = new ProcessStartInfo
+                        if (File.Exists(temp) && AssemblyName.GetAssemblyName(temp).Version.Equals(newestVersion))
                         {
-                            Arguments = string.Format(Localizer.Culture, @"/c taskkill /f /im ""{0}"" & move /y ""{1}"" ""{2}"" & start """" ""{2}"" /{3} {4}", exe, temp, path, newestVersion, string.Join(" ", args)),
-                            CreateNoWindow = true,
-                            FileName = "cmd",
-                            RedirectStandardError = false,
-                            RedirectStandardInput = false,
-                            RedirectStandardOutput = false,
-                            UseShellExecute = false,
-                            WindowStyle = ProcessWindowStyle.Hidden
-                        };
+                            _updateProcess = new ProcessStartInfo
+                            {
+                                Arguments = string.Format(Localizer.Culture, @"/c taskkill /f /im ""{0}"" & move /y ""{1}"" ""{2}"" & start """" ""{2}"" /{3} {4}", exe, temp, path, newestVersion, string.Join(" ", args)),
+                                CreateNoWindow = true,
+                                FileName = "cmd",
+                                RedirectStandardError = false,
+                                RedirectStandardInput = false,
+                                RedirectStandardOutput = false,
+                                UseShellExecute = false,
+                                WindowStyle = ProcessWindowStyle.Hidden
+                            };
 
-                        Environment.Exit(0);
+                            Environment.Exit(0);
+                        }
                     }
                 }
             }
